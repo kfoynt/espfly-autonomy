@@ -1,0 +1,5 @@
+#pragma once
+/* As the drone's sdkconfig (CONFIG_CAMERA_CORE0=y, the converter off, CONFIG_CAMERA_DMA_BUFFER_SIZE_MAX 16384). */
+#define CONFIG_CAMERA_CORE0 1
+#define CONFIG_IDF_TARGET_ESP32S3 1
+#define CONFIG_CAMERA_DMA_BUFFER_SIZE_MAX 16384

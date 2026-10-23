@@ -1,0 +1,7 @@
+## IDF Component Manager manifest for the flight-controller component
+dependencies:
+  idf:
+    version: '>=5.0'
+  # OV2640 driver for the XIAO ESP32S3 Sense camera (optical-flow measurement)
+  # Pinned (2026-10-16): the colour split's wrappers (cam_split.c) read the driver's private cam_obj_t of 2.1.0
+  espressif/esp32-camera: "==2.1.0"

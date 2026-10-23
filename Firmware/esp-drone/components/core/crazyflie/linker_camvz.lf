@@ -1,0 +1,44 @@
+# The math helpers the camera height observer's camvz task calls for every
+# block and frame (cam_vz_glue.c), in IRAM like the task's own code: from
+# flash they would keep a few of the stabilizer's lines out of the 16 KB
+# instruction cache both cores share. sqrtf, fmaxf, fminf and lrintf are on
+# the stabilizer's own 1 kHz / 100 Hz path too. ~1 KB of internal RAM.
+# expf (every loop in the DRY/BENCH sim plant's vzSimStep, and the observer)
+# brings its wrapper's finitef; math_errf, reached only when the result
+# overflows or underflows float, stays in flash.
+[mapping:camvz_libm]
+archive: libm.a
+entries:
+    lib_a-wf_sqrt (noflash)
+    lib_a-sf_fmax (noflash)
+    lib_a-sf_fmin (noflash)
+    lib_a-sf_fpclassify (noflash)
+    lib_a-sf_lrint (noflash)
+    lib_a-wf_exp (noflash)
+    lib_a-ef_exp (noflash)
+    lib_a-sf_finite (noflash)
+
+[mapping:camvz_libgcc]
+archive: libgcc.a
+entries:
+    _sqrtf (noflash)
+
+[mapping:camvz_libc]
+archive: libc.a
+entries:
+    lib_a-errno (noflash)
+
+# Native VGA fitting evicts the 1 kHz control path from the shared instruction
+# cache. Keep its compact math/correction routines resident; arithmetic and
+# gains are unchanged. Cold setup/reset/reporting functions stay in flash.
+[mapping:vga_control_hot]
+archive: libcrazyflie.a
+entries:
+    camera_flow:cameraFlowGyroSample (noflash)
+    sensfusion6:sensfusion6UpdateQ (noflash)
+    controller_pid:controllerPid (noflash)
+    attitude_pid_controller:attitudeControllerCorrectRatePID (noflash)
+    attitude_pid_controller:attitudeControllerCorrectAttitudePID (noflash)
+    pid:pidUpdate (noflash)
+    sensors_mpu6050_hm5883L_ms5611:sensorsTask (noflash)
+    stabilizer:stabilizerTask (noflash)
